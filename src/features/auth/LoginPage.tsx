@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/lib/axios';
+import boxLogo from '@/assets/box-logo.jpg';
 
 const loginSchema = z.object({
     identifier: z.string().email({ message: "Invalid email address" }),
@@ -99,10 +100,11 @@ export default function LoginPage() {
     };
 
     return (
-        <Card className="w-full">
-            <CardHeader>
-                <CardTitle>Login to Sales App</CardTitle>
-                <CardDescription>Enter your email and password to access your dashboard.</CardDescription>
+        <Card className="w-full shadow-lg border-t-4 border-t-primary">
+            <CardHeader className="flex flex-col items-center space-y-2">
+                <img src={boxLogo} alt="Logo" className="h-16 w-auto mb-2" />
+                <CardTitle className="text-2xl font-bold text-primary">Sales App</CardTitle>
+                <CardDescription>Welcome back! Please login to continue.</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <CardContent className="space-y-4">
@@ -119,11 +121,11 @@ export default function LoginPage() {
                     {error && <p className="text-sm text-red-500">{error}</p>}
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-2">
-                    <Button type="submit" className="w-full" disabled={isLoading}>
+                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                         {isLoading ? 'Logging in...' : 'Login'}
                     </Button>
                     <div className="text-sm text-center text-gray-500">
-                        Don't have an account? <Link to="/auth/register" className="text-primary hover:underline">Register</Link>
+                        Don't have an account? <Link to="/auth/register" className="text-primary hover:underline font-semibold">Register</Link>
                     </div>
                 </CardFooter>
             </form>

@@ -110,7 +110,9 @@ export default function SpkPage() {
     );
 }
 
-function SpkTable({ data, loading, onEdit, tab }: any) {
+// function SpkTable({ data, loading, onEdit, tab }: any) { 
+// Fix: 'tab' is unused
+function SpkTable({ data, loading, onEdit }: any) {
     if (loading) return <div className="p-8 text-center text-slate-500">Loading data...</div>;
     if (data.length === 0) return <div className="p-8 text-center text-slate-500 border rounded-lg bg-slate-50">No SPKs found.</div>;
 

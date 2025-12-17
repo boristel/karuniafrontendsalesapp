@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/lib/axios';
+import boxLogo from '@/assets/box-logo.jpg';
 
 
 const registerSchema = z.object({
@@ -74,9 +75,10 @@ export default function RegisterPage() {
     };
 
     return (
-        <Card className="w-full">
-            <CardHeader>
-                <CardTitle>Register Account</CardTitle>
+        <Card className="w-full shadow-lg border-t-4 border-t-primary">
+            <CardHeader className="flex flex-col items-center space-y-2">
+                <img src={boxLogo} alt="Logo" className="h-16 w-auto mb-2" />
+                <CardTitle className="text-2xl font-bold text-primary">Join Sales App</CardTitle>
                 <CardDescription>Create a new account for Sales Access.</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -104,11 +106,11 @@ export default function RegisterPage() {
                     {error && <p className="text-sm text-red-500">{error}</p>}
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-2">
-                    <Button type="submit" className="w-full" disabled={isLoading}>
+                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                         {isLoading ? 'Creating Account...' : 'Register'}
                     </Button>
                     <div className="text-sm text-center text-gray-500">
-                        Already have an account? <Link to="/auth/login" className="text-primary hover:underline">Login</Link>
+                        Already have an account? <Link to="/auth/login" className="text-primary hover:underline font-semibold">Login</Link>
                     </div>
                 </CardFooter>
             </form>
