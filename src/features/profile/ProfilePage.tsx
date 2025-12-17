@@ -38,7 +38,14 @@ export default function ProfilePage() {
             // Let's try numeric ID first as that is standard for 'refId'. If fails, we might need another approach.
             // Actually, for Strapi v5 media linking, sticking to numeric ID for 'refId' is often still the way for the Upload plugin, 
             // OR we update the entry itself with the media ID.
-            data.append('refId', profile.id.toString());
+            if (!profile?.id) {
+                alert("Please save your profile details first before uploading a photo.");
+                return;
+            }
+
+            // data.append('refId', profile.id.toString());
+            // Use documentId if available, fallback to id for Strapi v4/v5 compatibility
+            data.append('refId', (profile.id || profile.documentId).toString());
             data.append('field', 'photo_profile');
 
             console.log("Uploading file...", file.name, "to Profile ID:", profile.id);
@@ -145,8 +152,15 @@ export default function ProfilePage() {
             };
 
             // Strapi v5 uses documentId for updates, v4 uses id.
-            // Based on logs, we have documentId.
-            const updateId = profile.documentId || profile.id;
+            const updateId = profile?.documentId || profile?.id;
+
+            if (!updateId) {
+                // Determine if we need to create instead? 
+                // For now, alert error if no ID found, as it implies profile fetch failed.
+                alert("Error: No profile ID found. Please refresh or contact admin.");
+                return;
+            }
+
             await api.put(`/sales-profiles/${updateId}`, { data: payload });
 
             setProfile(formData);
