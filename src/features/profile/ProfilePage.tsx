@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 // Mock Profile Img URL (if needed)
-const BASE_URL_PROFILE = "https://salesapp.com/profile/";
+const BASE_URL_PROFILE = import.meta.env.VITE_QR_BASE_URL || "https://salesapp.com/profile/";
 const STRAPI_BASE_URL = import.meta.env.VITE_STRAPI_BASE_URL || "http://localhost:1337/api";
 const STRAPI_HOST = STRAPI_BASE_URL.replace('/api', '');
 
