@@ -38,7 +38,7 @@ You MUST set the following environment variables in the **Environment Variables*
 | `VITE_STRAPI_BASE_URL` | `https://api.yourdomain.com/api` | **CRITICAL**: The production URL of your Strapi Backend. |
 | `VITE_STRAPI_TOKEN` | `your_long_api_token` | The API Token from Strapi (Read-Only or Custom). |
 | `VITE_GOOGLE_MAPS_API_KEY` | `AIzaSy...` | Your Google Maps API Key. |
-| `VITE_QR_BASE_URL` | `https://app.yourdomain.com/profile/` | The base URL for the Profile QR Code. |
+| `VITE_QR_BASE_URL` | `https://app.yourdomain.com/profile/` | The base URL for the Profile QR Code. **Must end with `/`**. |
 
 > **Important**: Do not use `localhost` for `VITE_STRAPI_BASE_URL` in production. It must be the public URL of your Strapi server.
 
@@ -54,7 +54,7 @@ You MUST set the following environment variables in the **Environment Variables*
 
 ## Troubleshooting
 
-- **404 on Refresh**: Since this is a Single Page App (SPA), refreshing pages like `/dashboard` might cause a 404 if the server isn't configured for SPA fallback.
+- **404 on Refresh**: Since this is a Single Page App (SPA), refreshing pages like `/home` or `/dashboard` might cause a 404 if the server isn't configured for SPA fallback.
     - **Fix in Coolify (Nixpacks/Static)**: Usually handled automatically. If using a custom Nginx config, ensure `try_files $uri /index.html;` is present.
 - **API Errors**: Check the browser console. If you see CORS errors or connection refused, check your `VITE_STRAPI_BASE_URL`.
 - **White Screen**: Check the `Publish Directory`. It **must** be `dist`.
