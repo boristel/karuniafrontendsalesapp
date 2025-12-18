@@ -8,12 +8,13 @@ import ProfilePage from './features/profile/ProfilePage';
 import SpkPage from './features/spk/SpkPage';
 import CreateSpkForm from './features/spk/CreateSpkForm';
 import ProtectedRoute from './components/ProtectedRoute';
+import HomePage from './features/home/HomePage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
 
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />
@@ -23,6 +24,7 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
+            <Route path="/home" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/spk" element={<SpkPage />} />

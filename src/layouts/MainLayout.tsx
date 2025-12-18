@@ -53,18 +53,11 @@ export default function MainLayout() {
             <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50">
                 <div className="flex justify-around items-center h-16">
                     <NavLink
-                        to="/dashboard"
-                        onClick={(e) => {
-                            if (!isApproved) {
-                                e.preventDefault();
-                                alert("Dashboard requires approval.");
-                            }
-                        }}
+                        to="/home"
                         className={({ isActive }) =>
                             cn(
                                 "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
-                                isActive ? "text-primary" : "text-muted-foreground hover:text-primary",
-                                !isApproved && "opacity-50 cursor-not-allowed"
+                                isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
                             )
                         }
                     >
@@ -72,12 +65,12 @@ export default function MainLayout() {
                         <span>Home</span>
                     </NavLink>
 
-                    {/* Show Dashboard only if approved? Or disable? Design says: Disabled */}
                     <NavLink
-                        to="/dashboard" // Assuming Dashboard is also 'Home' or separate. Let's make "Dashboard" the middle icon
+                        to="/dashboard"
                         onClick={(e) => {
                             if (!isApproved) {
                                 e.preventDefault();
+                                alert("Dashboard requires approval.");
                             }
                         }}
                         className={({ isActive }) =>
