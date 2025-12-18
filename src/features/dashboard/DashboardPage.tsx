@@ -11,6 +11,7 @@ export default function DashboardPage() {
     const navigate = useNavigate();
     const user = useAuthStore((state) => state.user);
     const [salesUid, setSalesUid] = useState<string | null>(null);
+    const [salesProfile, setSalesProfile] = useState<any>(null);
     const [spkList, setSpkList] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -23,7 +24,9 @@ export default function DashboardPage() {
                     params: { filters: { email: { $eq: user.email } } }
                 });
                 if (res.data?.data?.length > 0) {
-                    setSalesUid(res.data.data[0].sales_uid);
+                    const profileData = res.data.data[0];
+                    setSalesUid(profileData.sales_uid);
+                    setSalesProfile(profileData);
                 }
             } catch (err) {
                 console.error("Failed to fetch profile", err);
@@ -84,7 +87,7 @@ export default function DashboardPage() {
                             <p className="text-center text-gray-500 py-8">No items on progress.</p>
                         ) : (
                             onProgressItems.map(item => (
-                                <SpkItemCard key={item.id} item={item} navigate={navigate} />
+                                <SpkItemCard key={item.id} item={item} navigate={navigate} salesProfile={salesProfile} />
                             ))
                         )}
                     </TabsContent>
@@ -94,7 +97,7 @@ export default function DashboardPage() {
                             <p className="text-center text-gray-500 py-8">No finished items.</p>
                         ) : (
                             finishItems.map(item => (
-                                <SpkItemCard key={item.id} item={item} navigate={navigate} />
+                                <SpkItemCard key={item.id} item={item} navigate={navigate} salesProfile={salesProfile} />
                             ))
                         )}
                     </TabsContent>
@@ -104,9 +107,20 @@ export default function DashboardPage() {
     )
 }
 
-function SpkItemCard({ item, navigate }: { item: any, navigate: any }) {
+import SpkActions from '../spk/components/SpkActionsNew';
+
+// ... (inside SpkItemCard)
+
+function SpkItemCard({ item, navigate, salesProfile }: { item: any, navigate: any, salesProfile: any }) {
     const isEditable = item.editable;
     const vehicleName = item.unitInfo?.vehicleType?.name || item.vehicleType?.name || '-';
+
+    const handleEdit = (data: any) => {
+        navigate(`/spk/edit/${data.documentId || data.id}`);
+    };
+
+    // Inject salesProfile into data
+    const itemWithProfile = { ...item, salesProfile };
 
     return (
         <Card>
@@ -124,12 +138,14 @@ function SpkItemCard({ item, navigate }: { item: any, navigate: any }) {
             <CardContent>
                 <div className="flex justify-between items-center">
                     <p className="font-medium">{vehicleName}</p>
-                    {isEditable && (
-                        <Button variant="outline" size="sm" onClick={() => navigate(`/spk/edit/${item.documentId || item.id}`)}>Edit Order</Button>
-                    )}
-                    {!isEditable && !item.finish && (
-                        <Button variant="secondary" size="sm">Upload Payment</Button>
-                    )}
+                    <div className="flex gap-2">
+                        {isEditable && (
+                            <SpkActions data={itemWithProfile} onEdit={handleEdit} />
+                        )}
+                        {!isEditable && !item.finish && (
+                            <Button variant="secondary" size="sm">Upload Payment</Button>
+                        )}
+                    </div>
                 </div>
             </CardContent>
         </Card>

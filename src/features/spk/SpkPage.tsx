@@ -6,18 +6,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PlusCircle, Edit, Printer } from "lucide-react";
+import { PlusCircle } from "lucide-react";
+import SpkActions from './components/SpkActionsNew';
+
 
 export default function SpkPage() {
     const navigate = useNavigate();
     const user = useAuthStore((state) => state.user);
     const [salesUid, setSalesUid] = useState<string | null>(null);
+    const [salesProfile, setSalesProfile] = useState<any>(null);
     const [spkList, setSpkList] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState("on_progress"); // on_progress | finish
 
     // 1. Fetch Sales UID first
     useEffect(() => {
+        // alert("VERSION CHECK: YOU ARE RUNNING THE NEW CODE!");
         const fetchProfile = async () => {
             if (!user) return;
             try {
@@ -25,7 +29,9 @@ export default function SpkPage() {
                     params: { filters: { email: { $eq: user.email } } }
                 });
                 if (res.data?.data?.length > 0) {
-                    setSalesUid(res.data.data[0].sales_uid);
+                    const profileData = res.data.data[0];
+                    setSalesUid(profileData.sales_uid);
+                    setSalesProfile(profileData);
                 }
             } catch (err) {
                 console.error("Failed to fetch profile", err);
@@ -99,11 +105,11 @@ export default function SpkPage() {
                 </TabsList>
 
                 <TabsContent value="on_progress">
-                    <SpkTable data={spkList} loading={loading} onEdit={handleEdit} tab="on_progress" />
+                    <SpkTable data={spkList} loading={loading} onEdit={handleEdit} salesProfile={salesProfile} />
                 </TabsContent>
 
                 <TabsContent value="finish">
-                    <SpkTable data={spkList} loading={loading} onEdit={handleEdit} tab="finish" />
+                    <SpkTable data={spkList} loading={loading} onEdit={handleEdit} salesProfile={salesProfile} />
                 </TabsContent>
             </Tabs>
         </div>
@@ -112,7 +118,7 @@ export default function SpkPage() {
 
 // function SpkTable({ data, loading, onEdit, tab }: any) { 
 // Fix: 'tab' is unused
-function SpkTable({ data, loading, onEdit }: any) {
+function SpkTable({ data, loading, onEdit, salesProfile }: any) {
     if (loading) return <div className="p-8 text-center text-slate-500">Loading data...</div>;
     if (data.length === 0) return <div className="p-8 text-center text-slate-500 border rounded-lg bg-slate-50">No SPKs found.</div>;
 
@@ -131,32 +137,25 @@ function SpkTable({ data, loading, onEdit }: any) {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data.map((spk: any) => (
-                                <TableRow key={spk.id}>
-                                    <TableCell className="font-medium">{spk.noSPK}</TableCell>
-                                    <TableCell>
-                                        <div className="font-medium">{spk.namaCustomer}</div>
-                                        <div className="text-xs text-slate-500">{spk.noTeleponCustomer}</div>
-                                    </TableCell>
-                                    <TableCell>{spk.unitInfo?.vehicleType?.name || spk.vehicleType?.name || '-'}</TableCell>
-                                    <TableCell>{spk.tanggal}</TableCell>
-                                    <TableCell>
-                                        <div className="flex gap-2">
-                                            {/* Edit Action: Only if tab is progress (double check logic) or if editable is true */}
-                                            {/* User said: "Edit" only with condition finish = False and editable = True. */
-                                                (spk.finish === false && spk.editable === true) && (
-                                                    <Button size="sm" variant="outline" onClick={() => onEdit(spk)}>
-                                                        <Edit className="h-4 w-4" />
-                                                    </Button>
-                                                )}
-
-                                            <Button size="sm" variant="ghost" disabled>
-                                                <Printer className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {data.map((spk: any) => {
+                                console.log("Rendering Row for:", spk.noSPK, "| finish:", spk.finish, "| editable:", spk.editable);
+                                // Inject salesProfile
+                                const spkWithProfile = { ...spk, salesProfile };
+                                return (
+                                    <TableRow key={spk.id}>
+                                        <TableCell className="font-medium">{spk.noSPK}</TableCell>
+                                        <TableCell>
+                                            <div className="font-medium">{spk.namaCustomer}</div>
+                                            <div className="text-xs text-slate-500">{spk.noTeleponCustomer}</div>
+                                        </TableCell>
+                                        <TableCell>{spk.unitInfo?.vehicleType?.name || spk.vehicleType?.name || '-'}</TableCell>
+                                        <TableCell>{spk.tanggal}</TableCell>
+                                        <TableCell>
+                                            <SpkActions data={spkWithProfile} onEdit={onEdit} />
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
                         </TableBody>
                     </Table>
                 </div>
