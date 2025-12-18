@@ -138,7 +138,7 @@ function SpkTable({ data, loading, onEdit, salesProfile }: any) {
                         </TableHeader>
                         <TableBody>
                             {data.map((spk: any) => {
-                                console.log("Rendering Row for:", spk.noSPK, "| finish:", spk.finish, "| editable:", spk.editable);
+                                // console.log("Rendering Row for:", spk.noSPK, "| finish:", spk.finish, "| editable:", spk.editable);
                                 // Inject salesProfile
                                 const spkWithProfile = { ...spk, salesProfile };
                                 return (

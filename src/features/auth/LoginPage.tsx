@@ -62,7 +62,7 @@ export default function LoginPage() {
 
                     // Handle potential string vs boolean mismatch
                     const isApproved = profile.approved === true || profile.approved === 'true';
-                    console.log("Login Check - Profile:", profile, "Approved:", isApproved);
+                    // console.log("Login Check - Profile:", profile, "Approved:", isApproved);
 
                     login(user, jwt, isApproved);
 

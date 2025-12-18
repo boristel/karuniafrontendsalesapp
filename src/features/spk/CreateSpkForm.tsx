@@ -119,7 +119,7 @@ export default function CreateSpkForm() {
             // B. Fetch SPK Data (If Edit) or Setup New
             if (editId) {
                 try {
-                    console.log("Fetching SPK ID (Filter):", editId);
+                    // console.log("Fetching SPK ID (Filter):", editId);
                     // Use Filter instead of ID lookup to avoid 500
                     const spkRes = await api.get('/spks', {
                         params: {
@@ -127,13 +127,13 @@ export default function CreateSpkForm() {
                             populate: '*'
                         }
                     });
-                    console.log("SPK Fetch Response:", spkRes.data);
+                    // console.log("SPK Fetch Response:", spkRes.data);
 
                     const spkData = spkRes.data?.data; // Handle { data: [...] }
                     const spk = Array.isArray(spkData) ? spkData[0] : spkData; // Handle if by accident it returns array
 
                     if (spk) {
-                        console.log("Populating Form with:", spk);
+                        // console.log("Populating Form with:", spk);
                         // Populate Form
                         setNextSpkNumber(spk.noSPK);
                         setFormData(prev => ({
