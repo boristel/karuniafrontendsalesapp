@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/authStore';
 
-const BASE_URL = import.meta.env.VITE_STRAPI_BASE_URL || 'http://localhost:1337/api';
+import { ENV } from '../config/env';
+
+const BASE_URL = ENV.STRAPI_BASE_URL;
 
 export const api = axios.create({
     baseURL: BASE_URL,
