@@ -29,6 +29,11 @@ Verify the settings in the **Configuration** -> **Build** tab:
 - **Build Command**: `npm run build`
 - **Install Command**: `npm install`
 - **Publish Directory**: `dist` (This is where Vite outputs the build)
+- **Start Command**:
+    - If you selected **Static Web Website**: *Leave this empty*.
+    - If you selected **Nixpacks / Application**: `npm run preview -- --host`
+- **Use a Build Server**: *Unchecked* (Ensure your local server is selected, unless you have a dedicated build cluster).
+
 
 ### 4. Environment Variables
 You MUST set the following environment variables in the **Environment Variables** tab. These are critical for the app to function.
@@ -59,4 +64,10 @@ You MUST set the following environment variables in the **Environment Variables*
 - **404 on Refresh**: Since this is a Single Page App (SPA), refreshing pages like `/home` or `/dashboard` might cause a 404 if the server isn't configured for SPA fallback.
     - **Fix in Coolify (Nixpacks/Static)**: Usually handled automatically. If using a custom Nginx config, ensure `try_files $uri /index.html;` is present.
 - **API Errors**: Check the browser console. If you see CORS errors or connection refused, check your `VITE_STRAPI_BASE_URL`.
+- **502 Bad Gateway**: This means Coolify cannot connect to your app.
+    - **Cause 1**: Wrong Port. Vite previews on `4173` but Coolify might expect `3000`.
+        - **Fix**: In **Settings** -> **General** -> **Ports Exposes**, change it to `4173`.
+    - **Cause 2**: Wrong Resource Type.
+        - **Fix (Recommended)**: Go to **Settings**, change **Build Pack** to **Static Web Website**. This removes the need for a Node server and listening ports.
 - **White Screen**: Check the `Publish Directory`. It **must** be `dist`.
+
