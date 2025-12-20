@@ -38,6 +38,7 @@ You MUST set the following environment variables in the **Environment Variables*
 | `VITE_STRAPI_BASE_URL` | `https://api.yourdomain.com/api` | **CRITICAL**: The production URL of your Strapi Backend (must end with `/api`). |
 | `VITE_STRAPI_URL` | `https://api.yourdomain.com` | **CRITICAL**: The root URL of your Strapi Backend (for media/images). |
 | `VITE_STRAPI_TOKEN` | `your_long_api_token` | The API Token from Strapi (Read-Only or Custom). |
+| `VITE_APP_VERSION` | `1.0.1` | The application version displayed in the footer. |
 | `VITE_GOOGLE_MAPS_API_KEY` | `AIzaSy...` | Your Google Maps API Key. |
 | `VITE_QR_BASE_URL` | `https://app.yourdomain.com/profile/` | The base URL for the Profile QR Code. **Must end with `/`**. |
 

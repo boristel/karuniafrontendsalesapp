@@ -67,13 +67,13 @@ export default function AttendanceCard({ profileId, initialStatus, isBlocked }: 
     const updateLocation = useCallback(async (currentPos: { latitude: number; longitude: number }) => {
         if (!currentPos) return;
         try {
-            // console.log("Syncing location to backend...", currentPos);
+
             await api.put(`/sales-profiles/${profileId}`, {
                 data: {
                     location: currentPos // JSON field
                 }
             });
-            // console.log("Location synced successfully.");
+
         } catch (error) {
             console.error("Failed to sync location", error);
         }

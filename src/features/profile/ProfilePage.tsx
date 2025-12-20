@@ -50,13 +50,13 @@ export default function ProfilePage() {
             data.append('refId', (profile.id || profile.documentId).toString());
             data.append('field', 'photo_profile');
 
-            // console.log("Uploading file...", file.name, "to Profile ID:", profile.id);
+
 
             const uploadRes = await api.post('/upload', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            // console.log("Upload Success:", uploadRes.data);
+
 
             if (uploadRes.data && uploadRes.data.length > 0) {
                 const uploadedFile = uploadRes.data[0];
@@ -112,7 +112,7 @@ export default function ProfilePage() {
                     setFormData(profileData);
                 } else {
                     // No profile found
-                    // console.log("No profile found.");
+
                     setProfile(null); // Explicit null
                     setFormData({});
                 }

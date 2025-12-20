@@ -23,7 +23,7 @@ export const useAttendanceTracker = () => {
                 //        }
                 //     }
                 // });
-                // console.log('Location tracked & synced to Sales Profile:', position);
+
             } catch (error) {
                 console.error('Tracking failed', error);
             }

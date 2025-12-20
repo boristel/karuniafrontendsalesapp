@@ -37,7 +37,7 @@ export const useProfileSync = () => {
 
                     // Only update if changed to avoid loops
                     if (newIsApproved !== isApproved) {
-                        // console.log("Profile Sync: Status changed to", newIsApproved);
+
                         // We need to update the store WITHOUT breaking the token/user
                         // Re-using login method or adding a setApproved method would be cleaner
                         // access store directly via hook

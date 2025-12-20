@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/lib/axios';
+import { ENV } from '@/config/env';
 import boxLogo from '@/assets/box-logo.jpg';
 
 const loginSchema = z.object({
@@ -62,7 +63,7 @@ export default function LoginPage() {
 
                     // Handle potential string vs boolean mismatch
                     const isApproved = profile.approved === true || profile.approved === 'true';
-                    // console.log("Login Check - Profile:", profile, "Approved:", isApproved);
+
 
                     login(user, jwt, isApproved);
 
@@ -100,35 +101,47 @@ export default function LoginPage() {
     };
 
     return (
-        <Card className="w-full shadow-lg border-t-4 border-t-primary">
-            <CardHeader className="flex flex-col items-center space-y-2">
-                <img src={boxLogo} alt="Logo" className="h-16 w-auto mb-2" />
-                <CardTitle className="text-2xl font-bold text-primary">Sales App</CardTitle>
-                <CardDescription>Welcome back! Please login to continue.</CardDescription>
-            </CardHeader>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="identifier">Email</Label>
-                        <Input id="identifier" type="email" placeholder="sales@dealer.com" {...register('identifier')} />
-                        {errors.identifier && <p className="text-sm text-red-500">{errors.identifier.message}</p>}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input id="password" type="password" {...register('password')} />
-                        {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
-                    </div>
-                    {error && <p className="text-sm text-red-500">{error}</p>}
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-2">
-                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-                        {isLoading ? 'Logging in...' : 'Login'}
-                    </Button>
-                    <div className="text-sm text-center text-gray-500">
-                        Don't have an account? <Link to="/auth/register" className="text-primary hover:underline font-semibold">Register</Link>
-                    </div>
-                </CardFooter>
-            </form>
-        </Card>
+        <div className="w-full space-y-8">
+            <Card className="w-full shadow-lg border-t-4 border-t-primary">
+                <CardHeader className="flex flex-col items-center space-y-2">
+                    <img src={boxLogo} alt="Logo" className="h-16 w-auto mb-2" />
+                    <CardTitle className="text-2xl font-bold text-primary">Sales App</CardTitle>
+                    <CardDescription>Welcome back! Please login to continue.</CardDescription>
+                </CardHeader>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="identifier">Email</Label>
+                            <Input id="identifier" type="email" placeholder="sales@dealer.com" {...register('identifier')} />
+                            {errors.identifier && <p className="text-sm text-red-500">{errors.identifier.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="password">Password</Label>
+                            <Input id="password" type="password" {...register('password')} />
+                            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+                        </div>
+                        {error && <p className="text-sm text-red-500">{error}</p>}
+                    </CardContent>
+                    <CardFooter className="flex flex-col space-y-2">
+                        <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+                            {isLoading ? 'Logging in...' : 'Login'}
+                        </Button>
+                        <div className="text-sm text-center text-gray-500">
+                            Don't have an account? <Link to="/auth/register" className="text-primary hover:underline font-semibold">Register</Link>
+                        </div>
+                    </CardFooter>
+                </form>
+            </Card>
+
+            <div className="text-center space-y-1">
+                <p className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-bold text-sm">
+                    Karunia Apps @nababancloud.net 2025
+                </p>
+                <p className="text-xs text-gray-400 font-mono tracking-wider">
+                    Trial Version {ENV.APP_VERSION}
+                </p>
+            </div>
+        </div>
+
     );
 }
