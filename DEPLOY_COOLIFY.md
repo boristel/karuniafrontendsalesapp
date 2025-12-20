@@ -65,9 +65,9 @@ You MUST set the following environment variables in the **Environment Variables*
     - **Fix in Coolify (Nixpacks/Static)**: Usually handled automatically. If using a custom Nginx config, ensure `try_files $uri /index.html;` is present.
 - **API Errors**: Check the browser console. If you see CORS errors or connection refused, check your `VITE_STRAPI_BASE_URL`.
 - **502 Bad Gateway**: This means Coolify cannot connect to your app.
-    - **Cause 1**: Wrong Port. Vite previews on `4173` but Coolify might expect `3000`.
-        - **Fix**: In **Settings** -> **General** -> **Ports Exposes**, change it to `4173`.
+    - **Cause 1**: Wrong Port. Your app is configured to use port **5555** in `vite.config.ts`.
+        - **Fix**: In **Settings** -> **General** -> **Ports Exposes**, you MUST change it to `5555`.
     - **Cause 2**: Wrong Resource Type.
-        - **Fix (Recommended)**: Go to **Settings**, change **Build Pack** to **Static Web Website**. This removes the need for a Node server and listening ports.
+        - **Fix**: Switch **Build Pack** to **Static Web Website** in **Settings** (This is the most stable option).
 - **White Screen**: Check the `Publish Directory`. It **must** be `dist`.
 
