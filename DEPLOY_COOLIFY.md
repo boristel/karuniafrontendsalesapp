@@ -14,8 +14,8 @@ This guide details how to deploy the Sales App (React + Vite) to a Coolify insta
 1.  Go to your Coolify Dashboard.
 2.  Click **+ New Resource**.
 3.  Select **Git Repository** (Public or Private).
-4.  Choose your repository: `karuniamotor/salesapp-react` (or your specific repo name).
-5.  Select the branch (e.g., `main` or `feature/spk-dashboard-update`).
+4.  Choose your repository: `boristel/karuniafrontendsalesapp` (or your specific repo name).
+5.  Select the branch (e.g., `main`).
 
 ### 2. Configuration Source
 Coolify will attempt to auto-detect the project type.
