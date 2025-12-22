@@ -279,20 +279,25 @@ export default function CreateSpkForm() {
 
         setLoading(true);
         try {
-            // Round 8 Fix: Use Object Syntax { id: 5 } for relations
-            // Direct ID (5) failed with 500. Strapi v5 often prefers object reference.
+
+
+            // For Sales Profile (Single relation, but connect syntax works for both in many adapters, 
+            // or use { id: X } if 1-to-1. Let's stick to { id: X } for 1-to-1 if 'connect' fails, 
+            // but for safety, the previous { id: X } is standard for "set".
+            // Let's TRY "set" syntax which is { id: X } effectively.
+            // Actually, let's keep { id: X } but ensure it's logged loud and clear.
+            // The previous payload showed "vehicleType": null in one logs.
+
             const toRel = (val: any) => {
                 if (!val || val === "") return null;
                 const num = Number(val);
                 return isNaN(num) ? null : { id: num };
-            };
-            // For Sales Profile specifically (User Relation)
-            const salesProfileRel = salesProfileId ? { id: salesProfileId } : null;
+            }
 
             const safePayload = {
                 data: {
                     noSPK: nextSpkNumber,
-                    salesProfile: salesProfileRel, // { id: 5 }
+                    salesProfile: salesProfileId ? { id: salesProfileId } : null,
                     tanggal: new Date().toISOString().split('T')[0],
 
                     // Customer & Root
@@ -313,11 +318,11 @@ export default function CreateSpkForm() {
 
                     // Unit Info
                     unitInfo: {
-                        vehicleType: toRel(formData.vehicleType), // { id: 1 }
+                        vehicleType: toRel(formData.vehicleType),
                         hargaOtr: Number(formData.hargaOtr) || 0,
                         noMesin: formData.noMesin,
                         noRangka: formData.noRangka,
-                        color: toRel(formData.color), // { id: 1 }
+                        color: toRel(formData.color),
                         tahun: String(formData.tahun),
                         bonus: formData.bonus || '-',
                         lainLain: formData.lainLain
@@ -335,15 +340,14 @@ export default function CreateSpkForm() {
                         keterangan: formData.keterangan || '-'
                     },
 
-                    // Media (IDs) - Keep these as IDs for now as they worked before (or maybe switch them too if this works)
-                    // Usually upload fields accept ID directly.
+                    // Media (IDs)
                     ktpPaspor: formData.ktpId,
                     kartuKeluarga: formData.kkId,
                     selfie: formData.selfieId
                 }
             };
 
-            console.log("PAYLOAD_DEBUG_ROUND_7:", JSON.stringify(safePayload, null, 2));
+            console.log("PAYLOAD_DEBUG_ROUND_11 (FINAL):", JSON.stringify(safePayload, null, 2));
 
             if (editId) {
                 await api.put(`/spks/${editId}`, safePayload);
@@ -356,24 +360,13 @@ export default function CreateSpkForm() {
             navigate('/spk');
         } catch (error: any) {
             console.error("Submission error FULL:", error);
-            if (error.response) {
-                console.error("RESPONSE DATA:", JSON.stringify(error.response.data, null, 2));
-                console.error("RESPONSE STATUS:", error.response.status);
-            }
 
             const status = error.response?.status;
             const data = error.response?.data;
-            const msg = data?.error?.message;
+            const errDetail = JSON.stringify(data?.error || data || "Check console", null, 2);
 
-            // Comprehensive Alert for Field Debugging
-            if (status === 500) {
-                const errDetail = JSON.stringify(data?.error || data || "Check console", null, 2);
-                alert(`SERVER ERROR (500)!\n\nProbably a schema mismatch.\n\nServer Said:\n${errDetail}`);
-            } else if (msg) {
-                alert(`Validation Failed:\n${msg}`);
-            } else {
-                alert(`Error (${status || 'Unknown'}):\n${JSON.stringify(data || error.message)}`);
-            }
+            // Force user to see what happened
+            alert(`ERROR ${status}!\n\nCheck Console for "PAYLOAD_DEBUG_ROUND_11".\n\nServer Said:\n${errDetail}`);
         } finally {
             setLoading(false);
         }
