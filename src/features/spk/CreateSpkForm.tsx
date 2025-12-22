@@ -287,14 +287,8 @@ export default function CreateSpkForm() {
 
         setLoading(true);
         try {
-
-
-            // For Sales Profile (Single relation, but connect syntax works for both in many adapters, 
-            // or use { id: X } if 1-to-1. Let's stick to { id: X } for 1-to-1 if 'connect' fails, 
-            // but for safety, the previous { id: X } is standard for "set".
-            // Let's TRY "set" syntax which is { id: X } effectively.
-            // Actually, let's keep { id: X } but ensure it's logged loud and clear.
-            // The previous payload showed "vehicleType": null in one logs.
+            // Round 14 Fix: Explicitly remove NULL keys.
+            // Strapi hates nulls for relations (sometimes). We explicitly DELETE them.
 
             const toRel = (val: any) => {
                 if (!val || val === "") return null;
@@ -302,83 +296,73 @@ export default function CreateSpkForm() {
                 return isNaN(num) ? null : { id: num };
             }
 
-            // Round 13 Fix: "Deep Clean" to remove nulls/empty strings which Strapi hate.
-            // This is a safety layer.
-            const prunePayload = (obj: any): any => {
-                const newObj: any = {};
-                Object.keys(obj).forEach(key => {
-                    const val = obj[key];
-                    if (val === null || val === "" || val === undefined) {
-                        // Skip (Prune)
-                    } else if (typeof val === 'object' && !Array.isArray(val)) {
-                        const child = prunePayload(val);
-                        if (Object.keys(child).length > 0) newObj[key] = child;
-                    } else {
-                        newObj[key] = val;
-                    }
-                });
-                return newObj;
+            const payloadData: any = {
+                noSPK: nextSpkNumber,
+                salesProfile: salesProfileId ? { id: salesProfileId } : null,
+                tanggal: new Date().toISOString().split('T')[0],
+
+                // Customer & Root
+                namaCustomer: formData.namaCustomer,
+                pekerjaanCustomer: formData.pekerjaanCustomer || '-',
+                emailcustomer: formData.emailCustomer,
+                namaDebitur: formData.namaDebitur,
+                alamatCustomer: formData.alamatCustomer,
+                kotacustomer: formData.kotaBpkbStnk,
+                noTeleponCustomer: formData.noTeleponCustomer,
+
+                // Paper Info
+                detailInfo: {
+                    namaBpkbStnk: formData.namaBpkbStnk,
+                    alamatBpkbStnk: formData.alamatBpkbStnk,
+                    kotaStnkBpkb: formData.kotaBpkbStnk,
+                },
+
+                // Unit Info
+                unitInfo: {
+                    vehicleType: toRel(formData.vehicleType),
+                    hargaOtr: Number(formData.hargaOtr) || 0,
+                    noMesin: formData.noMesin,
+                    noRangka: formData.noRangka,
+                    color: toRel(formData.color),
+                    tahun: String(formData.tahun),
+                    bonus: formData.bonus || '-',
+                    lainLain: formData.lainLain
+                },
+
+                // Payment Info
+                paymentInfo: {
+                    caraBayar: formData.caraBayar,
+                    angsuran: Number(formData.angsuran) || 0,
+                    tandaJadi: Number(formData.tandaJadi) || 0,
+                    tenor: String(formData.tenor || '0'),
+                    namaLeasing: formData.namaLeasing || '-',
+                    dp: Number(formData.dp) || 0,
+                    pembelianVia: formData.pembelianVia || '-',
+                    keterangan: formData.keterangan || '-'
+                },
+
+                // Media (IDs)
+                ktpPaspor: formData.ktpId,
+                kartuKeluarga: formData.kkId,
+                selfie: formData.selfieId
             };
 
-            const rawPayload = {
-                data: {
-                    noSPK: nextSpkNumber,
-                    salesProfile: salesProfileId ? { id: salesProfileId } : null,
-                    tanggal: new Date().toISOString().split('T')[0],
+            // Explicitly DELETE null relations to avoid 500
+            if (!payloadData.unitInfo.vehicleType) delete payloadData.unitInfo.vehicleType;
+            if (!payloadData.unitInfo.color) delete payloadData.unitInfo.color;
 
-                    // Customer & Root
-                    namaCustomer: formData.namaCustomer,
-                    pekerjaanCustomer: formData.pekerjaanCustomer || '-',
-                    emailcustomer: formData.emailCustomer,
-                    namaDebitur: formData.namaDebitur,
-                    alamatCustomer: formData.alamatCustomer,
-                    kotacustomer: formData.kotaBpkbStnk,
-                    noTeleponCustomer: formData.noTeleponCustomer,
+            // Delete Media if null
+            if (!payloadData.ktpPaspor) delete payloadData.ktpPaspor;
+            if (!payloadData.kartuKeluarga) delete payloadData.kartuKeluarga;
+            if (!payloadData.selfie) delete payloadData.selfie;
 
-                    // Paper Info (Mapped to detailInfo)
-                    detailInfo: {
-                        namaBpkbStnk: formData.namaBpkbStnk,
-                        alamatBpkbStnk: formData.alamatBpkbStnk,
-                        kotaStnkBpkb: formData.kotaBpkbStnk,
-                    },
+            // Delete salesProfile if null
+            if (!payloadData.salesProfile) delete payloadData.salesProfile;
 
-                    // Unit Info
-                    unitInfo: {
-                        vehicleType: toRel(formData.vehicleType),
-                        hargaOtr: Number(formData.hargaOtr) || 0,
-                        noMesin: formData.noMesin,
-                        noRangka: formData.noRangka,
-                        color: toRel(formData.color),
-                        tahun: String(formData.tahun),
-                        bonus: formData.bonus || '-',
-                        lainLain: formData.lainLain
-                    },
+            const safePayload = { data: payloadData };
 
-                    // Payment Info
-                    paymentInfo: {
-                        caraBayar: formData.caraBayar,
-                        angsuran: Number(formData.angsuran) || 0,
-                        tandaJadi: Number(formData.tandaJadi) || 0,
-                        tenor: String(formData.tenor || '0'),
-                        namaLeasing: formData.namaLeasing || '-',
-                        dp: Number(formData.dp) || 0,
-                        pembelianVia: formData.pembelianVia || '-',
-                        keterangan: formData.keterangan || '-'
-                    },
-
-                    // Media (IDs)
-                    ktpPaspor: formData.ktpId,
-                    kartuKeluarga: formData.kkId,
-                    selfie: formData.selfieId
-                }
-            };
-
-            const safePayload = prunePayload(rawPayload);
-            // Ensure data wrapper exists after pruning if it was stripped (unlikely)
-            if (!safePayload.data) safePayload.data = rawPayload.data;
-
-
-            console.log("PAYLOAD_DEBUG_ROUND_11 (FINAL):", JSON.stringify(safePayload, null, 2));
+            console.log("VERSION: ROUND 14 (EXPLICIT NULL STRIP)");
+            console.log("PAYLOAD_DEBUG_ROUND_14:", JSON.stringify(safePayload, null, 2));
 
             if (editId) {
                 await api.put(`/spks/${editId}`, safePayload);
@@ -396,8 +380,7 @@ export default function CreateSpkForm() {
             const data = error.response?.data;
             const errDetail = JSON.stringify(data?.error || data || "Check console", null, 2);
 
-            // Force user to see what happened
-            alert(`ERROR ${status}!\n\nCheck Console for "PAYLOAD_DEBUG_ROUND_11".\n\nServer Said:\n${errDetail}`);
+            alert(`ERROR ${status}!\n\nCheck Console for "PAYLOAD_DEBUG_ROUND_14".\n\nServer Said:\n${errDetail}`);
         } finally {
             setLoading(false);
         }
