@@ -302,7 +302,25 @@ export default function CreateSpkForm() {
                 return isNaN(num) ? null : { id: num };
             }
 
-            const safePayload = {
+            // Round 13 Fix: "Deep Clean" to remove nulls/empty strings which Strapi hate.
+            // This is a safety layer.
+            const prunePayload = (obj: any): any => {
+                const newObj: any = {};
+                Object.keys(obj).forEach(key => {
+                    const val = obj[key];
+                    if (val === null || val === "" || val === undefined) {
+                        // Skip (Prune)
+                    } else if (typeof val === 'object' && !Array.isArray(val)) {
+                        const child = prunePayload(val);
+                        if (Object.keys(child).length > 0) newObj[key] = child;
+                    } else {
+                        newObj[key] = val;
+                    }
+                });
+                return newObj;
+            };
+
+            const rawPayload = {
                 data: {
                     noSPK: nextSpkNumber,
                     salesProfile: salesProfileId ? { id: salesProfileId } : null,
@@ -354,6 +372,11 @@ export default function CreateSpkForm() {
                     selfie: formData.selfieId
                 }
             };
+
+            const safePayload = prunePayload(rawPayload);
+            // Ensure data wrapper exists after pruning if it was stripped (unlikely)
+            if (!safePayload.data) safePayload.data = rawPayload.data;
+
 
             console.log("PAYLOAD_DEBUG_ROUND_11 (FINAL):", JSON.stringify(safePayload, null, 2));
 
