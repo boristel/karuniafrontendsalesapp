@@ -12,8 +12,11 @@ export const getStrapiMedia = (url: string | null | undefined): string | null =>
     if (!url) return null;
 
     // Check for "localhost" leakage in absolute URLs
-    if (url.includes('localhost:1337')) {
-        return url.replace('http://localhost:1337', ENV.STRAPI_URL);
+    if (url.includes('localhost:') || url.includes('127.0.0.1')) {
+        // Replace known localhost variations with production URL
+        return url
+            .replace('http://localhost:1337', ENV.STRAPI_URL)
+            .replace('http://127.0.0.1:1337', ENV.STRAPI_URL);
     }
 
     // Return absolute URLs as is (if not localhost)

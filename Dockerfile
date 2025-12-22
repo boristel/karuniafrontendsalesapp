@@ -9,10 +9,16 @@ RUN npm ci
 
 # Copy source and build
 COPY . .
-# Ensure environment variables are available during build (Vite needs them at build time)
-# Note: In Coolify, you pass these as build args or env vars.
-# If using runtime replacement, that requires a specific startup script.
-# For now, we assume standard build-time baking.
+
+# Build Arguments (Required for Vite to bake in Env Vars)
+ARG VITE_STRAPI_BASE_URL
+ARG VITE_STRAPI_URL
+ARG VITE_STRAPI_TOKEN
+ARG VITE_QR_BASE_URL
+ARG VITE_APP_VERSION
+ARG VITE_GOOGLE_MAPS_API_KEY
+
+# Ensure environment variables are available during build
 RUN npm run build
 
 # Stage 2: Serve
