@@ -85,14 +85,6 @@ export default function LoginPage() {
             }
         } catch (err: any) {
             console.error(err);
-            // Fallback for mock demo
-            if (data.identifier === 'sales@dealer.com' && data.password === 'password123') {
-                // Mock approved
-                const mockUser = { id: 1, username: 'sales_demo', email: 'sales@dealer.com', role: 'SALES', uid: 'user_123_abc' };
-                login(mockUser, 'mock_jwt_token', true); // isApproved=true
-                navigate('/dashboard');
-                return;
-            }
 
             setError(err.response?.data?.error?.message || 'Invalid credentials');
         } finally {

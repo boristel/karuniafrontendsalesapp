@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore } from "@/stores/authStore";
 import { api } from '@/lib/axios';
+import { ENV } from '@/config/env';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -549,7 +550,7 @@ export default function CreateSpkForm() {
                                     <Input type="file" className="hidden" id="ktp-upload" accept="image/*" onChange={e => handleMediaSelect(e, 'ktp')} />
                                     <Button variant="outline" onClick={() => document.getElementById('ktp-upload')?.click()}>Gallery</Button>
                                 </div>
-                                {formData.ktpUrl && <img src={formData.ktpUrl.startsWith('http') ? formData.ktpUrl : import.meta.env.VITE_STRAPI_BASE_URL?.replace('/api', '') + formData.ktpUrl} className="h-20 w-auto rounded border" />}
+                                {formData.ktpUrl && <img src={formData.ktpUrl.startsWith('http') ? formData.ktpUrl : ENV.STRAPI_BASE_URL?.replace('/api', '') + formData.ktpUrl} className="h-20 w-auto rounded border" />}
                             </div>
 
                             {/* KK */}
@@ -560,7 +561,7 @@ export default function CreateSpkForm() {
                                     <Input type="file" className="hidden" id="kk-upload" accept="image/*" onChange={e => handleMediaSelect(e, 'kk')} />
                                     <Button variant="outline" onClick={() => document.getElementById('kk-upload')?.click()}>Gallery</Button>
                                 </div>
-                                {formData.kkUrl && <img src={formData.kkUrl.startsWith('http') ? formData.kkUrl : import.meta.env.VITE_STRAPI_BASE_URL?.replace('/api', '') + formData.kkUrl} className="h-20 w-auto rounded border" />}
+                                {formData.kkUrl && <img src={formData.kkUrl.startsWith('http') ? formData.kkUrl : ENV.STRAPI_BASE_URL?.replace('/api', '') + formData.kkUrl} className="h-20 w-auto rounded border" />}
                             </div>
 
                             {/* SELFIE */}
@@ -571,7 +572,7 @@ export default function CreateSpkForm() {
                                     <Input type="file" className="hidden" id="selfie-upload" accept="image/*" onChange={e => handleMediaSelect(e, 'selfie')} />
                                     <Button variant="outline" onClick={() => document.getElementById('selfie-upload')?.click()}>Gallery</Button>
                                 </div>
-                                {formData.selfieUrl && <img src={formData.selfieUrl.startsWith('http') ? formData.selfieUrl : import.meta.env.VITE_STRAPI_BASE_URL?.replace('/api', '') + formData.selfieUrl} className="h-20 w-auto rounded border" />}
+                                {formData.selfieUrl && <img src={formData.selfieUrl.startsWith('http') ? formData.selfieUrl : ENV.STRAPI_BASE_URL?.replace('/api', '') + formData.selfieUrl} className="h-20 w-auto rounded border" />}
                             </div>
                         </CardContent>
                         <CardFooter className="flex gap-2">
