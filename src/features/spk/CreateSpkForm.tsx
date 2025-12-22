@@ -287,18 +287,22 @@ export default function CreateSpkForm() {
 
         setLoading(true);
         try {
-            // Round 14 Fix: Explicitly remove NULL keys.
-            // Strapi hates nulls for relations (sometimes). We explicitly DELETE them.
+            // Round 15 Fix: Strapi "Connect" Syntax + Empty String Pruning.
+            // 1. Relations must use { connect: [{ id: X }] } in v5/v4 generally.
+            // 2. Empty strings "" in Unique fields (noMesin) cause 500s. We MUST delete them.
 
-            const toRel = (val: any) => {
-                if (!val || val === "") return null;
+            const toConnect = (val: any) => {
+                if (!val || val === "") return [];
                 const num = Number(val);
-                return isNaN(num) ? null : { id: num };
-            }
+                return isNaN(num) ? [] : [{ id: num }];
+            };
+
+            // Sales Profile is also a relation
+            const salesProfileConnect = salesProfileId ? { connect: [{ id: salesProfileId }] } : null;
 
             const payloadData: any = {
                 noSPK: nextSpkNumber,
-                salesProfile: salesProfileId ? { id: salesProfileId } : null,
+                salesProfile: salesProfileConnect,
                 tanggal: new Date().toISOString().split('T')[0],
 
                 // Customer & Root
@@ -319,13 +323,13 @@ export default function CreateSpkForm() {
 
                 // Unit Info
                 unitInfo: {
-                    vehicleType: toRel(formData.vehicleType),
+                    vehicleType: { connect: toConnect(formData.vehicleType) },
                     hargaOtr: Number(formData.hargaOtr) || 0,
                     noMesin: formData.noMesin,
                     noRangka: formData.noRangka,
-                    color: toRel(formData.color),
+                    color: { connect: toConnect(formData.color) },
                     tahun: String(formData.tahun),
-                    bonus: formData.bonus || '-',
+                    bonus: formData.bonus,
                     lainLain: formData.lainLain
                 },
 
@@ -335,34 +339,45 @@ export default function CreateSpkForm() {
                     angsuran: Number(formData.angsuran) || 0,
                     tandaJadi: Number(formData.tandaJadi) || 0,
                     tenor: String(formData.tenor || '0'),
-                    namaLeasing: formData.namaLeasing || '-',
+                    namaLeasing: formData.namaLeasing,
                     dp: Number(formData.dp) || 0,
-                    pembelianVia: formData.pembelianVia || '-',
-                    keterangan: formData.keterangan || '-'
+                    pembelianVia: formData.pembelianVia,
+                    keterangan: formData.keterangan
                 },
 
                 // Media (IDs)
+                // Use ID directly for Media as they are typically file uploads, not recursive relations
                 ktpPaspor: formData.ktpId,
                 kartuKeluarga: formData.kkId,
                 selfie: formData.selfieId
             };
 
-            // Explicitly DELETE null relations to avoid 500
-            if (!payloadData.unitInfo.vehicleType) delete payloadData.unitInfo.vehicleType;
-            if (!payloadData.unitInfo.color) delete payloadData.unitInfo.color;
+            // PRUNING: Empty Strings & Nulls
 
-            // Delete Media if null
+            // 1. Delete Null Relations (if empty connect array)
+            if (payloadData.unitInfo.vehicleType.connect.length === 0) delete payloadData.unitInfo.vehicleType;
+            if (payloadData.unitInfo.color.connect.length === 0) delete payloadData.unitInfo.color;
+            if (!payloadData.salesProfile) delete payloadData.salesProfile;
+
+            // 2. Delete Empty Strings for Optional/Unique Fields
+            if (!payloadData.unitInfo.noMesin) delete payloadData.unitInfo.noMesin;
+            if (!payloadData.unitInfo.noRangka) delete payloadData.unitInfo.noRangka;
+            if (!payloadData.unitInfo.bonus) delete payloadData.unitInfo.bonus;
+            if (!payloadData.unitInfo.lainLain) delete payloadData.unitInfo.lainLain;
+
+            if (!payloadData.paymentInfo.namaLeasing) delete payloadData.paymentInfo.namaLeasing;
+            if (!payloadData.paymentInfo.pembelianVia) delete payloadData.paymentInfo.pembelianVia;
+            if (!payloadData.paymentInfo.keterangan) delete payloadData.paymentInfo.keterangan;
+
+            // 3. Delete Media if null
             if (!payloadData.ktpPaspor) delete payloadData.ktpPaspor;
             if (!payloadData.kartuKeluarga) delete payloadData.kartuKeluarga;
             if (!payloadData.selfie) delete payloadData.selfie;
 
-            // Delete salesProfile if null
-            if (!payloadData.salesProfile) delete payloadData.salesProfile;
-
             const safePayload = { data: payloadData };
 
-            console.log("VERSION: ROUND 14 (EXPLICIT NULL STRIP)");
-            console.log("PAYLOAD_DEBUG_ROUND_14:", JSON.stringify(safePayload, null, 2));
+            console.log("VERSION: ROUND 15 (CONNECT SYNTAX & PRUNING)");
+            console.log("PAYLOAD_DEBUG_ROUND_15:", JSON.stringify(safePayload, null, 2));
 
             if (editId) {
                 await api.put(`/spks/${editId}`, safePayload);
@@ -380,7 +395,7 @@ export default function CreateSpkForm() {
             const data = error.response?.data;
             const errDetail = JSON.stringify(data?.error || data || "Check console", null, 2);
 
-            alert(`ERROR ${status}!\n\nCheck Console for "PAYLOAD_DEBUG_ROUND_14".\n\nServer Said:\n${errDetail}`);
+            alert(`ERROR ${status}!\n\nCheck Console for "PAYLOAD_DEBUG_ROUND_15".\n\nServer Said:\n${errDetail}`);
         } finally {
             setLoading(false);
         }
