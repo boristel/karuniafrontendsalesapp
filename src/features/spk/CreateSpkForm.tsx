@@ -276,6 +276,14 @@ export default function CreateSpkForm() {
             alert("Sales Profile not linked. Please re-login or check your profile connection.");
             return;
         }
+        if (!formData.vehicleType) {
+            alert("Please select a Vehicle Type.");
+            return;
+        }
+        if (!formData.color) {
+            alert("Please select a Color.");
+            return;
+        }
 
         setLoading(true);
         try {
