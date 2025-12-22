@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '@/lib/axios';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthStore } from "@/stores/authStore";
-import { ENV } from "../../config/env";
+import { getStrapiMedia } from "@/lib/url";
 
 export default function HomePage() {
     const [articles, setArticles] = useState<any[]>([]);
@@ -51,7 +51,7 @@ export default function HomePage() {
                 <div className="grid gap-6 md:grid-cols-2">
                     {articles.map((article) => {
                         const imageUrl = getImageUrl(article);
-                        const fullImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : `${ENV.STRAPI_URL}${imageUrl}`) : null;
+                        const fullImageUrl = getStrapiMedia(imageUrl);
 
                         return (
                             <Card key={article.id} className="overflow-hidden">

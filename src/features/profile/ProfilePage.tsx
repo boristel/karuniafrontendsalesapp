@@ -11,10 +11,9 @@ import { Label } from "@/components/ui/label";
 
 // Mock Profile Img URL (if needed)
 import { ENV } from "../../config/env";
+import { getStrapiMedia } from "@/lib/url";
 
 const BASE_URL_PROFILE = ENV.QR_BASE_URL;
-const STRAPI_BASE_URL = ENV.STRAPI_BASE_URL;
-const STRAPI_HOST = STRAPI_BASE_URL.replace('/api', '');
 
 // Mock removed to prevent confusion.
 
@@ -207,9 +206,7 @@ export default function ProfilePage() {
                             <div className="h-24 w-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold mb-2 overflow-hidden border-2 border-slate-200">
                                 {profile?.photo_profile?.url ? (
                                     <img
-                                        src={profile.photo_profile.url.startsWith('http')
-                                            ? profile.photo_profile.url
-                                            : `${STRAPI_HOST}${profile.photo_profile.url}`}
+                                        src={getStrapiMedia(profile.photo_profile.url) || ''}
                                         alt="Profile"
                                         className="h-full w-full object-cover"
                                     />
