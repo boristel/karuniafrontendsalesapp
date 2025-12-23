@@ -7,6 +7,24 @@ This guide details how to deploy the Sales App (React + Vite) to a Coolify insta
 - Access to your Coolify dashboard.
 - A connected Git repository (GitHub/GitLab) containing this project.
 - The project pushed to the repository.
+- **Strapi backend deployed and configured** with proper database schema.
+
+## Backend Database Schema Requirements
+
+**IMPORTANT:** Your Strapi backend database must have the correct schema for Create SPK to work:
+
+```sql
+-- components_spk_section_units table
+ALTER TABLE "public"."components_spk_section_units"
+ALTER COLUMN "harga_otr" TYPE NUMERIC(15, 2),  -- Must handle values up to 999,999,999,999.99
+ALTER COLUMN "tahun" TYPE VARCHAR(10);          -- Year as string (e.g., "2025")
+
+-- components_spk_section_payments table
+ALTER TABLE "public"."components_spk_section_payments"
+ALTER COLUMN "tenor" TYPE VARCHAR(10);          -- Tenor as string (e.g., "60")
+```
+
+If you encounter "numeric field overflow" errors when creating SPK, run the above SQL on your Strapi database.
 
 ## Step-by-Step Deployment
 
