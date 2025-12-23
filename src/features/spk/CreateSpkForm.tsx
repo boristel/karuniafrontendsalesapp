@@ -312,12 +312,12 @@ export default function CreateSpkForm() {
 
             // FIX: Extract ID from object if vehicleType/color is stored as full object
             // Handle both: number ID (1) and object format ({id: 1, documentId: '...'})
-            const vehicleTypeId = typeof formData.vehicleType === 'object'
-                ? formData.vehicleType?.id
-                : formData.vehicleType;
-            const colorId = typeof formData.color === 'object'
-                ? formData.color?.id
-                : formData.color;
+            const vehicleTypeId = typeof formData.vehicleType === 'object' && formData.vehicleType !== null
+                ? (formData.vehicleType as { id: number }).id
+                : formData.vehicleType as number;
+            const colorId = typeof formData.color === 'object' && formData.color !== null
+                ? (formData.color as { id: number }).id
+                : formData.color as number;
 
             // Component-embedded relations: { id: number } ONLY - NO documentId!
             const vehicleTypeRelation = vehicleTypeId ? { id: Number(vehicleTypeId) } : null;
